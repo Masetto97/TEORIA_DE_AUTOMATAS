@@ -15,6 +15,6 @@ Desarrollar código en Jflex que recorra el fichero de aceites esenciales, almac
 
 Parte 2:
 
-Desarrollar una gramática que reconozca el texto del fichero de aceites esenciales usando, como parte de los símbolo terminales, los nombres encontrados en la práctica 1 como características, usando jflex y cup para ello.
+Desarrollar una gramática que reconozca el texto del fichero de aceites esenciales usando, como parte de los símbolo terminales, los nombres encontrados en la parte 1 como características, usando jflex y cup para ello.
 
-Además, se añadirán reglas semánticas a la gramática para que, a la vez que se analiza el texto se vaya generando una estructura de lista, donde cada elemento será un objeto de la clase generada en la práctica 1.
+Además, se añadirán reglas semánticas a la gramática para que, a la vez que se analiza el texto se vaya generando una estructura de lista, donde cada elemento será un objeto de la clase generada en la parte 1.
