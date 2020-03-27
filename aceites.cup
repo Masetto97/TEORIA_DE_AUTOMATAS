@@ -1,0 +1,82 @@
+import java_cup.runtime.*;
+import java.io.*;
+import java.lang.*;
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
+
+parser code {:
+
+	public static List<Aceites> aceites = new ArrayList<Aceites>();
+		
+
+	public static void main(String args[]) throws Exception {
+		FileInputStream fichero=new FileInputStream(args[0]);
+		DataInputStream entrada =new DataInputStream(fichero);
+		try{
+			new parser(new Yylex(entrada)).parse();
+			for(Aceites ac : aceites){
+				System.out.println("------------------------\n"+ac.toString()+"\n------------------------\n");
+			}
+		}
+		catch ( Exception e) {
+			System.out.println("Analisis INCORRECTO !!--->"+e.getMessage());
+			System.exit(1);}
+		System.out.println("Analisis Correcto ");
+	
+	}
+	public void syntax_error(Symbol s) {
+		report_error("Error de sintaxis en linea " + s, null);
+	}
+
+	public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+		String mensaje = ("\nError de sintaxis en linea "+ s.value +"\n columna " + s.right);
+		report_error(mensaje, null);
+	}
+
+	public static List<Aceites> getResults(InputStream iStream) throws Exception {
+		SymbolFactory sf = new ComplexSymbolFactory();
+		parser p = new parser(new Yylex(iStream),sf);
+
+		Symbol s = p.parse();
+		return p.aceites;
+	}
+:}
+
+terminal String TEXTO;
+terminal String INTRO, DOSPUNTOS;
+non terminal lista;
+non terminal propiedad;
+
+
+
+lista::= lista propiedad | propiedad INTRO | lista TEXTO INTRO| lista INTRO;
+propiedad::=TEXTO:t1 DOSPUNTOS TEXTO:t2{:
+	if(t1.contains("AE")){
+		Aceites newobject = new Aceites();
+		//System.out.println(t1+":"+t2);
+		try {
+			Method met = newobject.getClass().getMethod("setNombre", String.class);
+			met.invoke(newobject, t2);
+		} catch (Exception e) {
+			System.out.println("ERROR->"+e.getMessage());
+			return null;
+		}
+		this.parser.aceites.add(newobject);
+	}
+	else{			
+		Aceites object = this.parser.aceites.remove(this.parser.aceites.size()-1);
+		try {
+			String nombre_m= t1.toLowerCase();
+			nombre_m=Character.toUpperCase(nombre_m.charAt(0))+nombre_m.substring(1);
+			nombre_m=nombre_m.replace(" ", "_");
+			Method met = object.getClass().getMethod("set"+nombre_m, String.class);
+			met.invoke(object, t2);
+		} catch (Exception e) {
+			System.out.println("ERROR->"+e.getMessage());
+			return null;
+		}
+		this.parser.aceites.add(object);
+	}
+:};
+

@@ -1,0 +1,75 @@
+import java.util.*;
+import java.io.*;
+%%
+
+%class ClaseAceite         
+%standalone				
+%unicode					
+%16bit						
+%line						
+%column
+
+
+%{									
+ public List<String> Atributos = new ArrayList<String>();
+ public String cadena;
+
+%}
+
+%init{								
+ Atributos.add("NOMBRE");
+ cadena="";
+%init}
+
+
+%eof{								
+	cadena="public class Aceites{\n\n";
+	for(int i=0; i<Atributos.size();i++){
+   		cadena+="\tprivate String "+Atributos.get(i).toLowerCase()+";\n";
+	}
+	cadena+="\n\tpublic Aceites(){\n\t}\n";
+	String nombre_metodo="";
+	for(int i=0; i<Atributos.size();i++){
+		nombre_metodo = Atributos.get(i).toLowerCase();
+		nombre_metodo = Character.toUpperCase(nombre_metodo.charAt(0))+nombre_metodo.substring(1);
+		cadena+="\tpublic String get"+nombre_metodo+"(){\n\t\treturn this."+Atributos.get(i).toLowerCase()+";\n\t}\n\n";
+	}
+	for(int i=0; i<Atributos.size();i++){
+		nombre_metodo = Atributos.get(i).toLowerCase();
+		nombre_metodo = Character.toUpperCase(nombre_metodo.charAt(0))+nombre_metodo.substring(1);
+		cadena+="\tpublic void set"+nombre_metodo+"(String new_"+Atributos.get(i).toLowerCase()+"){\n\t\tthis."+Atributos.get(i).toLowerCase()+"=new_"+Atributos.get(i).toLowerCase()+";\n\t}\n\n";
+	}
+	String atributo1=Atributos.get(0).toLowerCase(),atributo2=Atributos.get(1).toLowerCase();
+	cadena+="\tpublic String toString(){\n\t\treturn \"[Nombre-->\"+this."+atributo1+"+\"]------[Nombre_latino-->\"+this."+atributo2+"+\"]\";\n\t}";
+	cadena+="\n}";
+	//System.out.println(cadena);
+  	String ruta = "./Aceites.java";
+	try{
+		File archivo = new File(ruta);
+		BufferedWriter bw;
+		bw = new BufferedWriter(new FileWriter(archivo));
+	    bw.write(cadena);
+	    bw.close();
+	    System.out.println("Generado con EXITO");
+    }
+    catch(IOException e){
+    	System.out.println("ERROR-->"+e.getMessage());
+    }
+%eof}
+
+%% 		
+						
+ [A-ZÁÉÍÓÚ]([A-ZÁÉÍÓÚ]?[a-záéíóú]* " "?)*/[:] {
+					if(!yytext().equals("AE")){
+						String aux= yytext().replace(" ", "_");
+						if(aux.charAt(0)=='_') aux = aux.substring(1);
+						if(!Atributos.contains(aux))
+							Atributos.add(aux);
+					}
+				}
+
+ . { }    
+ 
+ 
+ 
+

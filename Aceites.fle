@@ -1,0 +1,12 @@
+import java_cup.runtime.Symbol;
+%%
+%cup
+
+%%
+
+":" {return new Symbol(sym.DOSPUNTOS,":");}
+"\n" { return new Symbol(sym.INTRO,"\n");}
+[A-ZÁÉÍÓÚa-záéíóú()0-9 ,.ñ/]+ {return new Symbol(sym.TEXTO,yytext());}
+
+[ \t\r\f] { /* ignora delimitadores */ }
+. { System.err.println("Caracter Ilegal: "+yytext()); } 
